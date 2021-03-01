@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MovieDemo</string>
+    <string name="enter_movie_here">Enter movie here</string>
+    <string name="enter_minimum_of_four_characters">Enter minimum of four characters</string>
+</resources>
