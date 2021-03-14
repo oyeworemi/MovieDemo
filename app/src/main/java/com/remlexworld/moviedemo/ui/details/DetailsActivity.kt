@@ -99,6 +99,9 @@ class DetailsActivity : AppCompatActivity() {
 
     private fun updateUi(movie : Movie) {
         tvDescription.text = movie.Plot
+        tvIMDBID.text = movie.Genre
+        tvType.text = movie.Rated
+
     }
 
     companion object {

@@ -2,6 +2,7 @@ package com.remlexworld.moviedemo.data
 
 import com.google.gson.GsonBuilder
 import com.remlexworld.moviedemo.data.MockWebServerResponses.movieListResponse
+import com.remlexworld.moviedemo.data.MockWebServerResponses.movieWithIMBDtt0103776
 import com.remlexworld.moviedemo.data.local.AppDatabaseFake
 import com.remlexworld.moviedemo.data.local.MovieDaoFake
 import com.remlexworld.moviedemo.data.remote.MovieRemoteDataSource
@@ -29,6 +30,7 @@ class MovieRepositoryTest {
     private lateinit var baseUrl: HttpUrl
     private val DUMMY_TOKEN = "123456" // can be anything
     private val DUMMY_QUERY = "batman" // can be anything
+    private val DUMMY_imdbID = "tt0103776"
 
 
     // system in test
@@ -44,7 +46,7 @@ class MovieRepositoryTest {
     fun setup() {
         mockWebServer = MockWebServer()
         mockWebServer.start()
-        baseUrl = mockWebServer.url("?type=movie")
+        baseUrl = mockWebServer.url("/")
 
         retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -109,7 +111,34 @@ class MovieRepositoryTest {
 
 
     @Test
-    fun fetchMovieDetails() {
+    fun fetchMovieDetailsFromNetwork_emitMovie(): Unit = runBlocking {
+
+        // condition the response
+        mockWebServer.enqueue(
+                MockResponse()
+                        .setResponseCode(HttpURLConnection.HTTP_OK)
+                        .setBody(movieWithIMBDtt0103776)
+        )
+
+
+        val flowItems = movieRepository.fetchMovieDetails(DUMMY_imdbID, DUMMY_TOKEN).toList()
+
+
+        // first emission should be `loading`
+        assert(flowItems[0] == Result.loading(null))
+
+        // second emission should be the movie details
+        val movie = flowItems[1]?.data
+        //confirm movie id
+        assert(movie?.imdbID == DUMMY_imdbID)
+
+        // confirm response is a Movie object
+        assert(movie is Movie)
+
+
+        assert(flowItems[1] != Result.loading(null)) //loading should be false now
+
     }
+
 
 }

@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.remlexworld.moviedemo.R
 import com.remlexworld.moviedemo.model.Movie
 import com.remlexworld.moviedemo.model.Result
+import com.remlexworld.moviedemo.util.*
 import kotlinx.android.synthetic.main.activity_movies.*
 import kotlinx.coroutines.delay
 
@@ -41,12 +42,6 @@ class MoviesActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         rvMovies.layoutManager = layoutManager
 
-        val dividerItemDecoration = DividerItemDecoration(
-                rvMovies.context,
-                layoutManager.orientation
-        )
-
-        rvMovies.addItemDecoration(dividerItemDecoration)
         moviesAdapter = MoviesAdapter(this, list)
         rvMovies.adapter = moviesAdapter
 
@@ -54,7 +49,9 @@ class MoviesActivity : AppCompatActivity() {
             searchMovies(
                 et_searchField.text.toString().trim()
             )
-            
+
+             this?.dismissKeyboard(it)
+
         }
 
     }
